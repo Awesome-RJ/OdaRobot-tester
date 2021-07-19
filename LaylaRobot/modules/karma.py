@@ -4,16 +4,16 @@
 from typing import Dict, Union
 
 from pyrogram import filters
-from LaylaRobot.mongo import db
+
 from LaylaRobot.utils.dbfunc import is_karma_on, karma_off, karma_on
 from LaylaRobot.pyrogramee.pluginshelper import member_permissions
+from LaylaRobot.mongo import db
 from LaylaRobot import pbot as app
-from LaylaRobot.utils.filter_groups import (karma_positive_group, 
-                                        karma_negative_group)
 
-karma_negative_group = 4
-karma_positive_group = 3
 karmadb = db.karma
+karma_positive_group = 3
+karma_negative_group = 4
+
 
 async def int_to_alpha(user_id: int) -> str:
     alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
@@ -40,7 +40,7 @@ async def get_karmas_count() -> dict:
         return {}
     chats_count = 0
     karmas_count = 0
-    for chat in chats.to_list(length=1000000):
+    for chat in await chats.to_list(length=1000000):
         for i in chat["karma"]:
             karmas_count += chat["karma"][i]["karma"]
         chats_count += 1
@@ -48,7 +48,7 @@ async def get_karmas_count() -> dict:
 
 
 async def get_karmas(chat_id: int) -> Dict[str, int]:
-    karma = karmadb.find_one({"chat_id": chat_id})
+    karma = await karmadb.find_one({"chat_id": chat_id})
     if karma:
         karma = karma["karma"]
     else:
@@ -58,22 +58,22 @@ async def get_karmas(chat_id: int) -> Dict[str, int]:
 
 async def get_karma(chat_id: int, name: str) -> Union[bool, dict]:
     name = name.lower().strip()
-    karmas = get_karmas(chat_id)
+    karmas = await get_karmas(chat_id)
     if name in karmas:
         return karmas[name]
 
 
 async def update_karma(chat_id: int, name: str, karma: dict):
     name = name.lower().strip()
-    karmas = get_karmas(chat_id)
+    karmas = await get_karmas(chat_id)
     karmas[name] = karma
     await karmadb.update_one(
         {"chat_id": chat_id}, {"$set": {"karma": karmas}}, upsert=True
     )
 
 
-__mod_name__ = "Karma"
-__help__ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks" etc to upvote a message.
+_mod_name_ = "Karma"
+_help_ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks" etc to upvote a message.
 [DOWNVOTE] - Use downvote keywords like "-", "-1", etc to downvote a message.
 Reply to a message with /karma to check a user's karma
 Send /karma without replying to any message to chek karma list of top 10 users
