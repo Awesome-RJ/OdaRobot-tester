@@ -21,8 +21,8 @@ from LaylaRobot.utils.dbfunc import (
 from LaylaRobot.utils.filter_groups import karma_negative_group, karma_positive_group
 from LaylaRobot import pbot as app
 
-_mod_name_ = "Karma"
-_help_ = """
+__mod_name__ = "Karma"
+__help__ = """
 [UPVOTE] - Use upvote keywords like "+", "+1", "thanks" etc to upvote a message.
 [DOWNVOTE] - Use downvote keywords like "-", "-1", etc to downvote a message.
 Reply to a message with /karma to check a user's karma
