@@ -399,7 +399,6 @@ def layla_about_callback(update, context):
     elif query.data == "layla_back":
         query.message.edit_text(
                 PM_START_TEXT.format(
-                    escape_markdown(first_name),
                     escape_markdown(uptime),
                     sql.num_users(),
                     sql.num_chats()),
@@ -429,7 +428,6 @@ def Source_about_callback(update, context):
     elif query.data == "source_back":
         query.message.edit_text(
                 PM_START_TEXT.format(
-                    escape_markdown(first_name),
                     escape_markdown(uptime),
                     sql.num_users(),
                     sql.num_chats()),
