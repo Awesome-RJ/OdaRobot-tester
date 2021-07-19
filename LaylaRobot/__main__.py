@@ -371,6 +371,7 @@ def help_button(update, context):
 @run_async
 def layla_about_callback(update, context):
     query = update.callback_query
+    uptime = get_readable_time((time.time() - StartTime))
     if query.data == "layla_":
         query.message.edit_text(
             text=""" ℹ️ I'm *Oda Nobunaga*, a powerful group management bot built to help you manage your group easily.
@@ -397,8 +398,10 @@ def layla_about_callback(update, context):
             ),
         )
     elif query.data == "layla_back":
+        first_name = update.callback_query.first_name
         query.message.edit_text(
                 PM_START_TEXT.format(
+                    escape_markdown(first_name),
                     escape_markdown(uptime),
                     sql.num_users(),
                     sql.num_chats()),
@@ -410,6 +413,7 @@ def layla_about_callback(update, context):
 
 @run_async
 def Source_about_callback(update, context):
+    uptime = get_readable_time((time.time() - StartTime))
     query = update.callback_query
     if query.data == "source_":
         query.message.edit_text(
@@ -426,8 +430,10 @@ def Source_about_callback(update, context):
             ),
         )
     elif query.data == "source_back":
+        first_name = update.callback_query.first_name
         query.message.edit_text(
                 PM_START_TEXT.format(
+                    escape_markdown(first_name),
                     escape_markdown(uptime),
                     sql.num_users(),
                     sql.num_chats()),
@@ -435,7 +441,6 @@ def Source_about_callback(update, context):
                 parse_mode=ParseMode.MARKDOWN,
                 timeout=60,
             )
-
 @run_async
 def get_help(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
