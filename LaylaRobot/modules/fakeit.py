@@ -12,10 +12,9 @@ from LaylaRobot import telethn as tbot
 async def hi(event):
     if event.fwd_from:
         return
-    if event.is_group:
-        if not await is_admin(event, event.message.sender_id):
-            await event.reply("`You Should Be Admin To Do This!`")
-            return
+    if event.is_group and not await is_admin(event, event.message.sender_id):
+        await event.reply("`You Should Be Admin To Do This!`")
+        return
     fake = Faker()
     print("FAKE DETAILS GENERATED\n")
     name = str(fake.name())
@@ -44,7 +43,7 @@ async def _(event):
             with open("FRIDAYOT.jpg", "wb") as f:
                 f.write(response.content)
 
-        captin = f"Fake Image powered by @AwesomeSupport."
+        captin = "Fake Image powered by @AwesomeSupport."
         fole = "FRIDAYOT.jpg"
         await tbot.send_file(event.chat_id, fole, caption=captin)
         await event.delete()

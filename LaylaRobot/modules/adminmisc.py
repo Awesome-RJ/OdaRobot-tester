@@ -229,31 +229,25 @@ async def get_user_from_event(event):
 
 
 def find_instance(items, class_or_tuple):
-    for item in items:
-        if isinstance(item, class_or_tuple):
-            return item
-    return None
+    return next((item for item in items if isinstance(item, class_or_tuple)), None)
 
 
 @bot.on(events.NewMessage(pattern="/lowpromote ?(.*)"))
 async def lowpromote(promt):
-    if promt.is_group:
-        if promt.sender_id == OWNER_ID:
-            pass
-        else:
-            if not await can_promote_users(message=promt):
-                return
-    else:
+    if (
+        promt.is_group
+        and promt.sender_id != OWNER_ID
+        and not await can_promote_users(message=promt)
+        or not promt.is_group
+    ):
         return
-
     user = await get_user_from_event(promt)
-    if promt.is_group:
-        if await is_register_admin(promt.input_chat, user.id):
-            await promt.reply("**Well! i cant promote user who is already an admin**")
-            return
-    else:
+    if not promt.is_group:
         return
 
+    if await is_register_admin(promt.input_chat, user.id):
+        await promt.reply("**Well! i cant promote user who is already an admin**")
+        return
     new_rights = ChatAdminRights(
         add_admins=False,
         invite_users=True,
@@ -263,15 +257,9 @@ async def lowpromote(promt):
         pin_messages=False,
     )
 
-    if user:
-        pass
-    else:
+    if not user:
         return
-    quew = promt.pattern_match.group(1)
-    if quew:
-        title = quew
-    else:
-        title = "Moderator"
+    title = quew if (quew := promt.pattern_match.group(1)) else "Moderator"
     # Try to promote if current user is admin or creator
     try:
         await bot(EditAdminRequest(promt.chat_id, user.id, new_rights, title))
@@ -286,23 +274,20 @@ async def lowpromote(promt):
 
 @bot.on(events.NewMessage(pattern="/midpromote ?(.*)"))
 async def midpromote(promt):
-    if promt.is_group:
-        if promt.sender_id == OWNER_ID:
-            pass
-        else:
-            if not await can_promote_users(message=promt):
-                return
-    else:
+    if (
+        promt.is_group
+        and promt.sender_id != OWNER_ID
+        and not await can_promote_users(message=promt)
+        or not promt.is_group
+    ):
         return
-
     user = await get_user_from_event(promt)
-    if promt.is_group:
-        if await is_register_admin(promt.input_chat, user.id):
-            await promt.reply("**Well! i cant promote user who is already an admin**")
-            return
-    else:
+    if not promt.is_group:
         return
 
+    if await is_register_admin(promt.input_chat, user.id):
+        await promt.reply("**Well! i cant promote user who is already an admin**")
+        return
     new_rights = ChatAdminRights(
         add_admins=False,
         invite_users=True,
@@ -312,15 +297,9 @@ async def midpromote(promt):
         pin_messages=True,
     )
 
-    if user:
-        pass
-    else:
+    if not user:
         return
-    quew = promt.pattern_match.group(1)
-    if quew:
-        title = quew
-    else:
-        title = "Admin"
+    title = quew if (quew := promt.pattern_match.group(1)) else "Admin"
     # Try to promote if current user is admin or creator
     try:
         await bot(EditAdminRequest(promt.chat_id, user.id, new_rights, title))
@@ -335,23 +314,20 @@ async def midpromote(promt):
 
 @bot.on(events.NewMessage(pattern="/highpromote ?(.*)"))
 async def highpromote(promt):
-    if promt.is_group:
-        if promt.sender_id == OWNER_ID:
-            pass
-        else:
-            if not await can_promote_users(message=promt):
-                return
-    else:
+    if (
+        promt.is_group
+        and promt.sender_id != OWNER_ID
+        and not await can_promote_users(message=promt)
+        or not promt.is_group
+    ):
         return
-
     user = await get_user_from_event(promt)
-    if promt.is_group:
-        if await is_register_admin(promt.input_chat, user.id):
-            await promt.reply("**Well! i cant promote user who is already an admin**")
-            return
-    else:
+    if not promt.is_group:
         return
 
+    if await is_register_admin(promt.input_chat, user.id):
+        await promt.reply("**Well! i cant promote user who is already an admin**")
+        return
     new_rights = ChatAdminRights(
         add_admins=True,
         invite_users=True,
@@ -361,15 +337,9 @@ async def highpromote(promt):
         pin_messages=True,
     )
 
-    if user:
-        pass
-    else:
+    if not user:
         return
-    quew = promt.pattern_match.group(1)
-    if quew:
-        title = quew
-    else:
-        title = "Admin"
+    title = quew if (quew := promt.pattern_match.group(1)) else "Admin"
     # Try to promote if current user is admin or creator
     try:
         await bot(EditAdminRequest(promt.chat_id, user.id, new_rights, title))
@@ -384,23 +354,20 @@ async def highpromote(promt):
 
 @bot.on(events.NewMessage(pattern="/lowdemote(?: |$)(.*)"))
 async def lowdemote(dmod):
-    if dmod.is_group:
-        if not await can_promote_users(message=dmod):
-            return
-    else:
+    if (
+        dmod.is_group
+        and not await can_promote_users(message=dmod)
+        or not dmod.is_group
+    ):
         return
-
     user = await get_user_from_event(dmod)
-    if dmod.is_group:
-        if not await is_register_admin(dmod.input_chat, user.id):
-            await dmod.reply("**Hehe, i cant demote non-admin**")
-            return
-    else:
+    if not dmod.is_group:
         return
 
-    if user:
-        pass
-    else:
+    if not await is_register_admin(dmod.input_chat, user.id):
+        await dmod.reply("**Hehe, i cant demote non-admin**")
+        return
+    if not user:
         return
 
     # New rights after demotion
@@ -426,23 +393,20 @@ async def lowdemote(dmod):
 
 @bot.on(events.NewMessage(pattern="/middemote(?: |$)(.*)"))
 async def middemote(dmod):
-    if dmod.is_group:
-        if not await can_promote_users(message=dmod):
-            return
-    else:
+    if (
+        dmod.is_group
+        and not await can_promote_users(message=dmod)
+        or not dmod.is_group
+    ):
         return
-
     user = await get_user_from_event(dmod)
-    if dmod.is_group:
-        if not await is_register_admin(dmod.input_chat, user.id):
-            await dmod.reply("**Hehe, i cant demote non-admin**")
-            return
-    else:
+    if not dmod.is_group:
         return
 
-    if user:
-        pass
-    else:
+    if not await is_register_admin(dmod.input_chat, user.id):
+        await dmod.reply("**Hehe, i cant demote non-admin**")
+        return
+    if not user:
         return
 
     # New rights after demotion
@@ -470,20 +434,20 @@ async def middemote(dmod):
 async def get_users(show):
     if not show.is_group:
         return
-    if show.is_group:
-        if not await is_register_admin(show.input_chat, show.sender_id):
-            return
+    if not await is_register_admin(show.input_chat, show.sender_id):
+        return
     info = await bot.get_entity(show.chat_id)
-    title = info.title if info.title else "this chat"
+    title = info.title or "this chat"
     mentions = "Users in {}: \n".format(title)
     async for user in bot.iter_participants(show.chat_id):
-        if not user.deleted:
-            mentions += f"\n[{user.first_name}](tg://user?id={user.id}) {user.id}"
-        else:
-            mentions += f"\nDeleted Account {user.id}"
-    file = open("userslist.txt", "w+")
-    file.write(mentions)
-    file.close()
+        mentions += (
+            f"\nDeleted Account {user.id}"
+            if user.deleted
+            else f"\n[{user.first_name}](tg://user?id={user.id}) {user.id}"
+        )
+
+    with open("userslist.txt", "w+") as file:
+        file.write(mentions)
     await bot.send_file(
         show.chat_id,
         "userslist.txt",
@@ -498,12 +462,12 @@ async def _(event):
     if event.fwd_from:
         return
 
-    if event.is_group:
-        if not await can_ban_users(message=event):
-            return
-    else:
+    if (
+        event.is_group
+        and not await can_ban_users(message=event)
+        or not event.is_group
+    ):
         return
-
     # Here laying the sanity check
     chat = await event.get_chat()
     admin = chat.admin_rights.ban_users
@@ -544,9 +508,8 @@ async def _(event):
     if not event.is_group:
         return
 
-    if event.is_group:
-        if not await can_ban_users(message=event):
-            return
+    if not await can_ban_users(message=event):
+        return
 
     # Here laying the sanity check
     chat = await event.get_chat()
@@ -585,9 +548,8 @@ async def _(event):
 async def _(event):
     if not event.is_group:
         return
-    if event.is_group:
-        if not await can_ban_users(message=event):
-            return
+    if not await can_ban_users(message=event):
+        return
 
     # Here laying the sanity check
     chat = await event.get_chat()
@@ -655,12 +617,12 @@ async def kickme(bon):
 async def set_group_des(gpic):
     input_str = gpic.pattern_match.group(1)
     # print(input_str)
-    if gpic.is_group:
-        if not await can_change_info(message=gpic):
-            return
-    else:
+    if (
+        gpic.is_group
+        and not await can_change_info(message=gpic)
+        or not gpic.is_group
+    ):
         return
-
     try:
         await bot(
             functions.messages.EditChatAboutRequest(peer=gpic.chat_id, about=input_str)
@@ -672,12 +634,12 @@ async def set_group_des(gpic):
 
 @bot.on(events.NewMessage(pattern="/setsticker$"))
 async def set_group_sticker(gpic):
-    if gpic.is_group:
-        if not await can_change_info(message=gpic):
-            return
-    else:
+    if (
+        gpic.is_group
+        and not await can_change_info(message=gpic)
+        or not gpic.is_group
+    ):
         return
-
     rep_msg = await gpic.get_reply_message()
     if not rep_msg.document:
         await gpic.reply("Reply to any sticker plox.")
@@ -1028,9 +990,13 @@ def adminlist(update, context):
         else:
             name = "{}".format(
                 mention_html(
-                    user.id, html.escape(user.first_name + " " + (user.last_name or ""))
+                    user.id,
+                    html.escape(
+                        f'{user.first_name} ' + ((user.last_name or ""))
+                    ),
                 )
             )
+
 
         if user.is_bot:
             bot_admin_list.append(name)
@@ -1061,17 +1027,19 @@ def adminlist(update, context):
         else:
             name = "{}".format(
                 mention_html(
-                    user.id, html.escape(user.first_name + " " + (user.last_name or ""))
+                    user.id,
+                    html.escape(
+                        f'{user.first_name} ' + ((user.last_name or ""))
+                    ),
                 )
             )
-        # if user.username:
-        #    name = escape_markdown("@" + user.username)
+
         if status == "administrator":
             if custom_title:
                 try:
                     custom_admin_list[custom_title].append(name)
                 except KeyError:
-                    custom_admin_list.update({custom_title: [name]})
+                    custom_admin_list[custom_title] = [name]
             else:
                 normal_admin_list.append(name)
 

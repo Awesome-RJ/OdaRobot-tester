@@ -14,7 +14,7 @@ from LaylaRobot.pyrogramee.dark import get_arg
 async def song(client, message):
     message.chat.id
     message.from_user["id"]
-    args = get_arg(message) + " " + "song"
+    args = f'{get_arg(message)} song'
     if args.startswith(" "):
         await message.reply("<b>Enter song name❗</b>")
         return ""
@@ -58,7 +58,7 @@ async def fetch(url):
     return data
 
 async def download_song(url):
-    song_name = f"asuna.mp3"
+    song_name = "asuna.mp3"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             if resp.status == 200:
@@ -112,7 +112,7 @@ async def fetch(url):
     return data
 
 async def download_song(url):
-    song_name = f"asuna.mp3"
+    song_name = "asuna.mp3"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             if resp.status == 200:

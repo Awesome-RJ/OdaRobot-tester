@@ -20,14 +20,14 @@ async def is_nsfw(event):
             starkstark = event.client.download_media(lmao.media, thumb=-1)
         except:
             return False
-    elif lmao.photo or lmao.sticker:
+    elif lmao.photo:
         try:
             starkstark = event.client.download_media(lmao.media)
         except:
             return False
     img = starkstark
     f = {"file": (img, open(img, "rb"))}
-    
+
     r = requests.post("https://starkapi.herokuapp.com/nsfw/", files = f).json()
     if r.get("success") is False:
       is_nsfw = False
